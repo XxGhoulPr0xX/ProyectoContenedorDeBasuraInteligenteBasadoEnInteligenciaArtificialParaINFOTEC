@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contenedores</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/contenedor.css') }}" />
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Contenedores</h1>
+            <p>Sistema de Clasificación de Residuos con IA</p>
+        </div>
+        <div class="tabs">
+            <button class="tab active" onclick="cambiarTab('monitor')">
+                Monitor
+            </button>
+            <button class="tab" onclick="cambiarTab('alertas')">Alertas</button>
+            <button class="tab" onclick="cambiarTab('estadisticas')">
+                Estadísticas
+            </button>
+            <button class="tab" onclick="cambiarTab('galeria')">Galería</button>
+        </div>
+
+        <div id="tab-monitor" class="tab-content active">
+            <div class="ultima-clasificacion">
+                <h3>Última Imagen Clasificada</h3>
+                <div class="imagen-container">
+                    <img id="imagen-clasificada" src="/static/imagenes/placeholder.jpg"
+                        alt="Imagen de residuo clasificado" onerror="this.style.display='none'" />
+                </div>
+                <div class="result-box">
+                    <p>
+                        <strong>Clase del Modelo:</strong>
+                        <span id="clase-modelo" class="clase-resultado">Esperando detección...</span>
+                    </p>
+                    <p>
+                        <strong>Confianza:</strong>
+                        <span id="probabilidad">0.0%</span>
+                    </p>
+                </div>
+            </div>
+            <div class="contenedores-grid" id="contenedores-grid"></div>
+            <div class="button-group">
+                <button class="button danger" onclick="resetearContadores()">
+                    Resetear Contadores
+                </button>
+            </div>
+        </div>
+
+        <div id="tab-alertas" class="tab-content">
+            <div class="alertas-container">
+                <div class="alert-section">
+                    <h3><span class="alert-icon"></span> Alertas Críticas</h3>
+                    <div id="alertas-criticas">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">✓</div>
+                            <p>No hay alertas críticas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert-section">
+                    <h3><span class="alert-icon"></span> Advertencias</h3>
+                    <div id="alertas-advertencias">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">✓</div>
+                            <p>No hay advertencias</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert-section">
+                    <h3>Estadísticas de Alertas</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="stat-criticas">0</div>
+                            <div class="stat-label">Alertas Críticas</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="stat-advertencias">0</div>
+                            <div class="stat-label">Advertencias</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="stat-total">0</div>
+                            <div class="stat-label">Total Depositado</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-estadisticas" class="tab-content">
+            <div class="alertas-container">
+                <div class="alert-section">
+                    <h3><span class="alert-icon"></span> Resumen del Sistema</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="historial-total">0</div>
+                            <div class="stat-label">Total Clasificado</div>
+                        </div>
+                        <div class="stat-card" style="background: linear-gradient(135deg, #722f37 0%, #a04550 100%);">
+                            <div class="stat-number" id="clase-principal" style="font-size: 1.5rem;">---</div>
+                            <div class="stat-label">Clase más detectada</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="historial-confianza">0%</div>
+                            <div class="stat-label">Confianza Media Total</div>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid" style="margin-top: 20px;">
+                        <div class="stat-card" style="border-top: 4px solid #2d5016;">
+                            <div class="stat-number" id="conteo-bio" style="color: #2d5016;">0</div>
+                            <div class="stat-label">Biodegradables</div>
+                            <div class="alert-time" id="promedio-bio">Promedio: 0%</div>
+                        </div>
+                        <div class="stat-card" style="border-top: 4px solid #1565c0;">
+                            <div class="stat-number" id="conteo-no-bio" style="color: #1565c0;">0</div>
+                            <div class="stat-label">No Biodegradables</div>
+                            <div class="alert-time" id="promedio-no-bio">Promedio: 0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert-section">
+                    <h3>
+                        <span class="alert-icon"></span> Historial de Identificaciones
+                    </h3>
+                    <div id="lista-historial">
+                        <div class="loading">Cargando...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-galeria" class="tab-content">
+            <div class="button-group" style="margin-bottom: 30px">
+                <button class="button primary" onclick="cargarImagenes()">
+                    Actualizar Galería
+                </button>
+                <button class="button primary"  onclick="eliminarImagenes()">
+                    Eliminar Imagenes
+                </button>
+            </div>
+            <div id="galeria-container" class="loading">Cargando imágenes...</div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/contenedor.js') }}"></script>
+</body>
+
+</html>

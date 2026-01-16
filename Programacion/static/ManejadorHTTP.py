@@ -135,3 +135,30 @@ class Manejador():
         except Exception as e:
             print(f"Servidor: Error al guardar imagen: {e}")
             return None
+
+    def listarImagenes(self):
+        try:
+            archivos = [
+                f for f in os.listdir(self.imagenes_dir) 
+                if f.endswith(('.jpg', '.jpeg', '.png')) and f != 'placeholder.jpg'
+            ]
+            archivos.sort(reverse=True)
+            return jsonify(archivos), 200
+        except Exception as e:
+            print(f"Error al listar imágenes: {e}")
+            return jsonify([]), 500
+        
+
+    def eliminarImagenes(self):
+        try:
+            eliminados = 0
+            for nombre_archivo in os.listdir(self.imagenes_dir):
+                if nombre_archivo != 'placeholder.jpg':
+                    ruta_completa = os.path.join(self.imagenes_dir, nombre_archivo)
+                    if os.path.isfile(ruta_completa):
+                        os.remove(ruta_completa)
+                        eliminados += 1
+            return jsonify({"mensaje": f"Se eliminaron {eliminados} imágenes.", "status": "success"}), 200
+        except Exception as e:
+            print(f"Error al eliminar imágenes: {e}")
+            return jsonify({"mensaje": "Error al limpiar la galería", "status": "error"}), 500

@@ -25,8 +25,8 @@ def index():
             'probabilidad': 0.0,
             'imagen_path': 'Imagenes/placeholder.jpg'
         }
-        return render_template('index.html', resultado=resultado_default)
-    return render_template('index.html', resultado=alpha.diccionarioIdentificacion)
+        return render_template('contenedor.html', resultado=resultado_default)
+    return render_template('contenedor.html', resultado=alpha.diccionarioIdentificacion)
 
 @app.route('/', methods=['GET'])
 def redirigir_a_index():
@@ -78,7 +78,7 @@ def verificar_actualizacion():
 
 
 """
-    Ruta para obtener el historial completo de identificaciones
+    Endpoint para obtener el historial completo de identificaciones
     Returns:
         JSON: Diccionario con todas las identificaciones y contador
 """
@@ -88,7 +88,7 @@ def obtener_historial():
 
 
 """
-    Ruta para obtener estadísticas básicas de las identificaciones
+    Endpoint para obtener estadísticas básicas de las identificaciones
     Returns:
         JSON: Estadísticas del historial
 """
@@ -96,6 +96,15 @@ def obtener_historial():
 def obtener_estadisticas():
     return charlie.getEstadisticas()
 
+
+@app.route('/listarImagenes', methods=['GET'])
+def getImagenes():
+    return alpha.listarImagenes()
+
+
+@app.route('/eliminarImagenes', methods=['DELETE'])
+def setEliminarImagenes():
+    return alpha.eliminarImagenes()
 
 """
     Punto de entrada principal que inicia el servidor Flask
