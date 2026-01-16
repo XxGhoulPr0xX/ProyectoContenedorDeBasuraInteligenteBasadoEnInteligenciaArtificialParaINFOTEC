@@ -1,26 +1,31 @@
 let ultimaDeteccionId = null
 let ultimoTimestamp = 0
-let ultimoTiempoConteo = 0
+let estaBloqueado = false; // Nueva bandera de control
 let contadoresLocales = {
     biodegradable: 0,
     noBiodegradable: 0,
 }
 
+const biodegradables = ["biodegradable", "organico", "comida", "fruta"]; 
 const noBiodegradables = ["No biodegradable", "plastico", "metal", "vidrio", "inorganico"]
 
 function mapearClaseAContenedor(clase) {
-    const claseLower = clase.toLowerCase()
+    if (!clase) return null;
+    const claseLower = clase.toLowerCase();
     if (noBiodegradables.some((nb) => claseLower.includes(nb.toLowerCase()))) {
-        return "noBiodegradable"
+        return "noBiodegradable";
     }
-    return "biodegradable"
+    if (biodegradables.some((b) => claseLower.includes(b.toLowerCase()))) {
+        return "biodegradable";
+    }
+    return null; 
 }
 
 // INICIALIZAR
 function inicializar() {
-    inicializarContenedores()
-    actualizarInterfaz()
-    buscarActualizacionesFlask()
+    inicializarContenedores();
+    actualizarInterfazContador();
+    buscarActualizaciones();
 }
 
 function inicializarContenedores() {
@@ -48,40 +53,27 @@ function inicializarContenedores() {
     })
 }
 
-function buscarActualizacionesFlask() {
-    $.ajax({
-        url: `/verificar_actualizacion`,
-        type: "GET",
-        data: { timestamp: ultimoTimestamp },
-        success: (response) => {
-            if (response.actualizado && response.datos) {
-                const deteccionId = response.timestamp
-                if (deteccionId !== ultimaDeteccionId) {
-                    ultimoTimestamp = response.timestamp
-                    actualizarClasificacion(response.datos)
-                    if (response.datos.clase !== "Objeto no identificado. Reintentar") {
-                        const ahora = new Date().getTime()
-                        const tiempoEspera = 5000
-                        if (ahora - ultimoTiempoConteo > tiempoEspera) {
-                            const contenedor = mapearClaseAContenedor(response.datos.clase)
-                            contadoresLocales[contenedor]++
-                            ultimoTiempoConteo = ahora
-                            actualizarInterfaz()
-                        }
-                    }
-                    ultimaDeteccionId = deteccionId
+function buscarActualizaciones() {
+        $.ajax({
+            url: '/verificar_actualizacion',
+            type: 'GET',
+            data: { timestamp: ultimoTimestamp },
+            success: function(response) {
+                if (response.actualizado) {
+                    ultimoTimestamp = response.timestamp;
+                    actualizarInterfazClasificacion(response.datos);
+                    actualizarInterfazContador();
                 }
+                buscarActualizaciones();
+            },
+            error: function(error) {
+                console.error(error)
+                setTimeout(buscarActualizaciones, 5000);
             }
-            setTimeout(buscarActualizacionesFlask, 2000)
-        },
-        error: (error) => {
-            console.error("Error conectando con Flask:", error)
-            setTimeout(buscarActualizacionesFlask, 5000)
-        },
-    })
-}
+        });
+    }
 
-function actualizarClasificacion(datos) {
+function actualizarInterfazClasificacion(datos) {
     if (datos.imagen_path) {
         const img = $("#imagen-clasificada")
         img.css("opacity", "0.5")
@@ -107,40 +99,49 @@ function actualizarClasificacion(datos) {
     } else {
         claseModelo.addClass("organico biodegradable")
     }
-
-    actualizarHora()
 }
 
-function actualizarInterfaz() {
-    Object.keys(contadoresLocales).forEach((tipo) => {
-        const count = contadoresLocales[tipo]
-        const limit = 20
-        const porcentaje = (count / limit) * 100
+function actualizarInterfazContador() {
+    $.ajax({
+        url: '/estadisticas',
+        type: 'GET',
+        success: (data) => {
+            contadoresLocales.biodegradable = data.Biodegradable || 0;
+            contadoresLocales.noBiodegradable = data.NoBiodegradable || 0;
+            Object.keys(contadoresLocales).forEach((tipo) => {
+                const count = contadoresLocales[tipo];
+                const limit = 20;
+                const porcentaje = Math.min((count / limit) * 100, 100); // Evitar que la barra exceda 100%
+                const barra = document.getElementById(`barra-${tipo}`);
+                const contador = document.getElementById(`contador-${tipo}`);
+                const card = document.getElementById(`card-${tipo}`);
+                const alertaDiv = document.getElementById(`alerta-${tipo}`);
 
-        const barra = document.getElementById(`barra-${tipo}`)
-        const contador = document.getElementById(`contador-${tipo}`)
-        const card = document.getElementById(`card-${tipo}`)
-        const alertaDiv = document.getElementById(`alerta-${tipo}`)
+                if (!barra) return;
 
-        if (!barra) return
+                barra.style.height = `${porcentaje}%`;
+                contador.textContent = `${count}/${limit}`;
 
-        barra.style.height = `${porcentaje}%`
-        contador.textContent = `${count}/${limit}`
+                card.classList.remove("alerta-mitad", "alerta-lleno");
+                contador.classList.remove("mitad", "lleno");
+                alertaDiv.innerHTML = "";
 
-        card.classList.remove("alerta-mitad", "alerta-lleno")
-        contador.classList.remove("mitad", "lleno")
-        alertaDiv.innerHTML = ""
-
-        if (count >= limit) {
-            card.classList.add("alerta-lleno")
-            contador.classList.add("lleno")
-            alertaDiv.innerHTML = '<span class="alerta-badge lleno">LLENO</span>'
-        } else if (count >= limit / 2) {
-            card.classList.add("alerta-mitad")
-            contador.classList.add("mitad")
-            alertaDiv.innerHTML = '<span class="alerta-badge mitad">MITAD</span>'
+                if (count >= limit) {
+                    card.classList.add("alerta-lleno");
+                    contador.classList.add("lleno");
+                    alertaDiv.innerHTML = '<span class="alerta-badge lleno">LLENO</span>';
+                } else if (count >= limit / 2) {
+                    card.classList.add("alerta-mitad");
+                    contador.classList.add("mitad");
+                    alertaDiv.innerHTML = '<span class="alerta-badge mitad">MITAD</span>';
+                }
+            });
+            actualizarAlertas();
+        },
+        error: (err) => {
+            console.error("Error al obtener conteos del historial:", err);
         }
-    })
+    });
 }
 
 function actualizarAlertas() {
@@ -362,9 +363,8 @@ function resetearContadores() {
             noBiodegradable: 0,
         };
         ultimaDeteccionId = null;
-        ultimoTiempoConteo = 0;
         ultimoTimestamp = 0;
-        actualizarInterfaz();
+        actualizarInterfazContador();
     }
 }
 

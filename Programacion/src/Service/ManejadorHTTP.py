@@ -163,14 +163,6 @@ class Manejador():
         except Exception as e:
             print(f"Error al eliminar imágenes: {e}")
             return jsonify({"mensaje": "Error al limpiar la galería", "status": "error"}), 500
-        
-    def procesarFlujo(self, charlie, estado_servidor):
-        self.recepcionMensaje()
-        respuesta = self.enviarMensaje()
-        if self.data and self.data.get("evento") == "imagen bytes":
-            charlie.setDiccionarioPrincipal(self.diccionarioIdentificacion)
-        estado_servidor["ultima_actualizacion"] = time.time()
-        return respuesta
 
     def getResultadoActual(self):
         if self.diccionarioIdentificacion is None:
