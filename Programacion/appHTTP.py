@@ -1,116 +1,18 @@
-import time
-from static.ManejadorHTTP import Manejador
-from static.HistorialResultados import estadisticasIdentificaciones
-from flask import Flask, jsonify, redirect, render_template, request
+from flask import Flask
+from src.Controller.rutas import rutas
+from src.Service.Servicios import alpha
 
+def create_app():
+    app = Flask(__name__)
+    
+    app.register_blueprint(rutas)
+    
+    return app
 
-app = Flask(__name__)
-# Inicializa el manejador con la ruta del modelo de IA entrenado
-alpha = Manejador(modelo="C:\\Users\\XxGho\\OneDrive\\Documentos\\Escuela\\Proceso Dual\\Proyecto\\3° Proyecto\\Programacion\\static\\Modelos\\Identificacion de images\\model_retrained_REALDATA_v2.h5")
-charlie= estadisticasIdentificaciones()
-#alpha=Manejador(modelo="C:\\Users\\XxGho\\OneDrive\\Documentos\\Escuela\\Proceso Dual\\Proyecto\\3° Proyecto\\Programacion\\static\\Modelos\\Identificacion de objetos\\yoloooo.pt")
-
-ultimaActualizacion = 0
-
-"""
-    Ruta principal que muestra la página web con los resultados de clasificación
-    Returns:
-        HTML: Página renderizada con los resultados de la clasificación
-"""
-@app.route('/index', methods=['GET'])
-def index():
-    if alpha.diccionarioIdentificacion is None:
-        resultado_default = {
-            'clase': 'Esperando detección...',
-            'probabilidad': 0.0,
-            'imagen_path': 'Imagenes/placeholder.jpg'
-        }
-        return render_template('contenedor.html', resultado=resultado_default)
-    return render_template('contenedor.html', resultado=alpha.diccionarioIdentificacion)
-
-@app.route('/', methods=['GET'])
-def redirigir_a_index():
-    return redirect('/index')
-
-
-"""
-    Endpoint para recibir y procesar solicitudes de clasificación de objetos
-    Returns:
-        tuple: Respuesta JSON con el resultado de la clasificación y código de estado
-"""
-@app.route('/', methods=['POST'])
-def clasificar_objeto():
-    global ultimaActualizacion
-    alpha.recepcionMensaje()
-    respuesta = alpha.enviarMensaje()
-    if alpha.data.get("evento") == "imagen bytes":
-            charlie.setDiccionarioPrincipal(alpha.diccionarioIdentificacion)
-    ultimaActualizacion = time.time()
-    return respuesta
-
-"""
-    Endpoint para recibir y procesar solicitudes de clasificación de objetos
-    Returns:
-        tuple: Respuesta JSON con el resultado de la clasificación y código de estado
-"""
-@app.route('/verificar_actualizacion', methods=['GET'])
-def verificar_actualizacion():
-    global ultimaActualizacion
-    timestamp_cliente = float(request.args.get('timestamp', 0))
-    timeout = 30
-    inicio = time.time()
-    while True:
-        if ultimaActualizacion > timestamp_cliente:
-            if (alpha.diccionarioIdentificacion and 
-                alpha.diccionarioIdentificacion.get('clase') != 'Esperando detección...'):
-                
-                return jsonify({
-                    'actualizado': True,
-                    'timestamp': ultimaActualizacion,
-                    'datos': alpha.diccionarioIdentificacion
-                })
-        if (time.time() - inicio) > timeout:
-            return jsonify({
-                'actualizado': False,
-                'timestamp': ultimaActualizacion
-            })
-        time.sleep(0.5)
-
-
-"""
-    Endpoint para obtener el historial completo de identificaciones
-    Returns:
-        JSON: Diccionario con todas las identificaciones y contador
-"""
-@app.route('/historial', methods=['GET'])
-def obtener_historial():
-    return charlie.getHistorial()
-
-
-"""
-    Endpoint para obtener estadísticas básicas de las identificaciones
-    Returns:
-        JSON: Estadísticas del historial
-"""
-@app.route('/estadisticas', methods=['GET'])
-def obtener_estadisticas():
-    return charlie.getEstadisticas()
-
-
-@app.route('/listarImagenes', methods=['GET'])
-def getImagenes():
-    return alpha.listarImagenes()
-
-
-@app.route('/eliminarImagenes', methods=['DELETE'])
-def setEliminarImagenes():
-    return alpha.eliminarImagenes()
-
-"""
-    Punto de entrada principal que inicia el servidor Flask
-"""
 if __name__ == '__main__':
+    app = create_app()
     try:
+        print(f"Iniciando servidor en: {alpha.getIpServidor()}:5000")
         app.run(host=alpha.getIpServidor(), port=5000, debug=False, threaded=True)
     except Exception as e:
         print(f"Error al iniciar el servidor: {e}")
