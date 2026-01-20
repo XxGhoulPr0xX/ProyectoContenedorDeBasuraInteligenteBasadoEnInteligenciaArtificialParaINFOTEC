@@ -1,0 +1,13 @@
+mi_entorno/
+venv/
+.env
+
+Programas viejos/
+.vscode/
+.git/
+.gitignore
+dockerfile
+.dockerignore
+
+**/__pycache__/
+*.pyc
