@@ -1,13 +1,23 @@
 mi_entorno/
 venv/
 .env
-
-Programas viejos/
-.vscode/
-.git/
-.gitignore
-dockerfile
-.dockerignore
-
 **/__pycache__/
 *.pyc
+
+"Programas viejos/"
+"Documentación/"
+"Esp32/"
+
+.vscode/
+.git/
+
+PruebaModelosYOLO.py
+
+static/Modelos/Identificacion\ de\ images/*
+static/Modelos/Identificacion\ de\ objetos/*
+
+!static/Modelos/Identificacion\ de\ images/model_retrained_REALDATA_v2.h5
+
+dockerfile
+.dockerignore
+README.md
