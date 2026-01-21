@@ -30,9 +30,7 @@ def verificar_actualizacion():
     inicio = time.time()
     while True:
         if ultimaActualizacion > timestamp_cliente:
-            if (alpha.diccionarioIdentificacion and 
-                alpha.diccionarioIdentificacion.get('clase') != 'Esperando detección...'):
-                
+            if (alpha.diccionarioIdentificacion):
                 return jsonify({
                     'actualizado': True,
                     'timestamp': ultimaActualizacion,
@@ -55,8 +53,17 @@ def obtenerEstadisticas():
 
 @rutas.route('/listarImagenes', methods=['GET'])
 def getImagenes():
-    return alpha.listarImagenes()
+    return delta.listarImagenes()
 
 @rutas.route('/eliminarImagenes', methods=['DELETE'])
 def setEliminarImagenes():
-    return alpha.eliminarImagenes()
+    global ultimaActualizacion
+    respuesta, status = delta.eliminarImagenes()
+    if status == 200:
+        alpha.resetearEstado()
+        ultimaActualizacion = time.time()
+    return respuesta, status
+
+@rutas.route('/resetEstadisticas', methods=['POST'])
+def resetEstadisticas():
+    return charlie.resetearEstadisticas() 

@@ -3,7 +3,7 @@ import time
 import uuid
 from flask import Flask, request, jsonify
 from src.Service.pruebaModelosTF import *
-#from src.Service.pruebaModelosTF import *
+from pathlib import Path
 import socket
 
 class Manejador():
@@ -19,7 +19,7 @@ class Manejador():
         self.ultimaImagenCapturada = None
         self.no_biodegradables = ["No biodegradable", "plastico", "metal", "vidrio"]
         self.bravo=pruebaModeloIA(modelo)
-        self.imagenes_dir = os.path.join('Programacion','static', 'imagenes')
+        self.imagenes_dir = Path(__file__).resolve().parent.parent.parent / "static" / "imagenes"
 
     """
         Recibe y valida un mensaje JSON desde una solicitud HTTP
@@ -137,38 +137,19 @@ class Manejador():
             print(f"Servidor: Error al guardar imagen: {e}")
             return None
 
-    def listarImagenes(self):
-        try:
-            archivos = [
-                f for f in os.listdir(self.imagenes_dir) 
-                if f.endswith(('.jpg', '.jpeg', '.png')) and f != 'placeholder.jpg'
-            ]
-            archivos.sort(reverse=True)
-            return jsonify(archivos), 200
-        except Exception as e:
-            print(f"Error al listar imágenes: {e}")
-            return jsonify([]), 500
-        
-
-    def eliminarImagenes(self):
-        try:
-            eliminados = 0
-            for nombre_archivo in os.listdir(self.imagenes_dir):
-                if nombre_archivo != 'placeholder.jpg':
-                    ruta_completa = os.path.join(self.imagenes_dir, nombre_archivo)
-                    if os.path.isfile(ruta_completa):
-                        os.remove(ruta_completa)
-                        eliminados += 1
-            return jsonify({"mensaje": f"Se eliminaron {eliminados} imágenes.", "status": "success"}), 200
-        except Exception as e:
-            print(f"Error al eliminar imágenes: {e}")
-            return jsonify({"mensaje": "Error al limpiar la galería", "status": "error"}), 500
+    def resetearEstado(self):
+        self.diccionarioIdentificacion = {
+                'clase': 'Esperando detección...',
+                'probabilidad': 0.0,
+                'imagen_path': 'imagenes/placeholder.jpg'
+        }
+        self.ultimaImagenCapturada = None
 
     def getResultadoActual(self):
         if self.diccionarioIdentificacion is None:
             return {
                 'clase': 'Esperando detección...',
                 'probabilidad': 0.0,
-                'imagen_path': 'Imagenes/placeholder.jpg'
+                'imagen_path': 'imagenes/placeholder.jpg'
             }
         return self.diccionarioIdentificacion

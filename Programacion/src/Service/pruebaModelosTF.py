@@ -1,9 +1,9 @@
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing import image
-from tensorflow.keras.applications.mobilenet_v2 import preprocess_input 
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input 
 
 class pruebaModeloIA:
     """
@@ -92,9 +92,3 @@ class pruebaModeloIA:
         except Exception as e:
             print(f"\nError: {str(e)}")
             
-
-if __name__ == "__main__":
-    model_path = "C:\\Users\\XxGho\\OneDrive\\Documentos\\Escuela\\Proceso Dual\\Proyecto\\3° Proyecto\\Programacion\\static\\Modelos\\Identificacion de images\\model_retrained_REALDATA_v2.h5"
-    img_path = "C:\\Users\\XxGho\\OneDrive\\Documentos\\Escuela\\Proceso Dual\\Proyecto\\2° Proyecto\\Real data\\B\\biodegradable0011.jpg"
-    alpha = pruebaModeloIA(model_path)
-    resultados = alpha.run(img_path)

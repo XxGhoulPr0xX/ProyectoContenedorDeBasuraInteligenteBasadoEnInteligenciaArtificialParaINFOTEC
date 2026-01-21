@@ -106,12 +106,12 @@ function actualizarInterfazContador() {
         url: '/estadisticas',
         type: 'GET',
         success: (data) => {
-            contadoresLocales.biodegradable = data.Biodegradable || 0;
-            contadoresLocales.noBiodegradable = data.NoBiodegradable || 0;
+            contadoresLocales.biodegradable = data.BiodegradableC;
+            contadoresLocales.noBiodegradable = data.NoBiodegradableC;
             Object.keys(contadoresLocales).forEach((tipo) => {
                 const count = contadoresLocales[tipo];
                 const limit = 20;
-                const porcentaje = Math.min((count / limit) * 100, 100); // Evitar que la barra exceda 100%
+                const porcentaje = Math.min((count / limit) * 100, 100);
                 const barra = document.getElementById(`barra-${tipo}`);
                 const contador = document.getElementById(`contador-${tipo}`);
                 const card = document.getElementById(`card-${tipo}`);
@@ -293,8 +293,8 @@ function cargarEstadisticasEHistorial() {
         type: 'GET',
         success: (data) => {
             const total = data.total_en_historial || 0;
-            const conteoBio = data.Biodegradable || 0;
-            const conteoNoBio = data.NoBiodegradable || 0;
+            const conteoBio = data.BiodegradableE || 0;
+            const conteoNoBio = data.NoBiodegradableE || 0;
             const confianza = data.promedio_confianza || 0;
             let claseMayoritaria = data.claseMayoritaria || "---";
             const porcBio = total > 0 ? ((conteoBio / total) * 100).toFixed(1) : 0;
@@ -355,20 +355,22 @@ function cargarEstadisticasEHistorial() {
         }
     });
 }
-
 function resetearContadores() {
-    if (confirm("¿Estás seguro de resetear todos los contadores?")) {
-        contadoresLocales = {
-            biodegradable: 0,
-            noBiodegradable: 0,
-        };
-        ultimaDeteccionId = null;
-        ultimoTimestamp = 0;
-        actualizarInterfazContador();
+    if (confirm("¿Estás seguro de resetear los contadores de la sesión?")) {
+        $.ajax({
+            url: '/resetEstadisticas',
+            type: 'POST',
+            success: function(response) {
+                contadoresLocales = {
+                    biodegradable: 0,
+                    noBiodegradable: 0,
+                };
+                actualizarInterfazContador();
+            }
+        });
     }
 }
 
-// INICIAR
 window.jQuery(document).ready(() => {
     inicializar()
 })

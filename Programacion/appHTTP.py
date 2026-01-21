@@ -12,7 +12,6 @@ def create_app():
 if __name__ == '__main__':
     app = create_app()
     try:
-        print(f"Iniciando servidor en: {alpha.getIpServidor()}:5000")
         app.run(host=alpha.getIpServidor(), port=5000, debug=False, threaded=True)
     except Exception as e:
         print(f"Error al iniciar el servidor: {e}")
