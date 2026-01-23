@@ -60,7 +60,9 @@ def setEliminarImagenes():
     global ultimaActualizacion
     respuesta, status = delta.eliminarImagenes()
     if status == 200:
-        alpha.resetearEstado()
+        datos_reset = alpha.resetearEstado()
+        if isinstance(respuesta, dict):
+            respuesta.update(datos_reset)
         ultimaActualizacion = time.time()
     return respuesta, status
 

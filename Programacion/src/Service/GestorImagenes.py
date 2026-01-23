@@ -32,9 +32,8 @@ class GaleriaManager:
                     eliminados += 1
             return jsonify({
                 "mensaje": f"Se eliminaron {eliminados} imágenes.", 
-                "status": "success",
-                "directorio": str(self.imagenes_dir)
-            }), 200
+                "status": "success"            
+                }), 200
         except Exception as e:
             print(f"Error al limpiar galería: {e}")
             return jsonify({

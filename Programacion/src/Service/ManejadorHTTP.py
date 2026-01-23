@@ -144,6 +144,7 @@ class Manejador():
                 'imagen_path': 'imagenes/placeholder.jpg'
         }
         self.ultimaImagenCapturada = None
+        return self.diccionarioIdentificacion
 
     def getResultadoActual(self):
         if self.diccionarioIdentificacion is None:

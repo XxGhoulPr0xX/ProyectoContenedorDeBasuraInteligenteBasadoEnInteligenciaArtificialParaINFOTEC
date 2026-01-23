@@ -1,13 +1,11 @@
-let ultimaDeteccionId = null
+const biodegradables = ["biodegradable", "organico", "comida", "fruta"]; 
+const noBiodegradables = ["No biodegradable", "plastico", "metal", "vidrio", "inorganico"]
+
 let ultimoTimestamp = 0
-let estaBloqueado = false; // Nueva bandera de control
 let contadoresLocales = {
     biodegradable: 0,
     noBiodegradable: 0,
 }
-
-const biodegradables = ["biodegradable", "organico", "comida", "fruta"]; 
-const noBiodegradables = ["No biodegradable", "plastico", "metal", "vidrio", "inorganico"]
 
 function mapearClaseAContenedor(clase) {
     if (!clase) return null;
@@ -21,7 +19,6 @@ function mapearClaseAContenedor(clase) {
     return null; 
 }
 
-// INICIALIZAR
 function inicializar() {
     inicializarContenedores();
     actualizarInterfazContador();
@@ -90,7 +87,7 @@ function actualizarInterfazClasificacion(datos) {
     const prob = datos.probabilidad ? (datos.probabilidad * 100).toFixed(1) : "0.0"
     $("#probabilidad").text(prob + "%")
 
-    claseModelo.removeClass("biodegradable organico no-biodegradable inorganico reintentar")
+    claseModelo.removeClass("biodegradable organico no-biodegradable inorganico reintentar clase-resultado organico biodegradable")
 
     if (datos.clase === "Objeto no identificado. Reintentar") {
         claseModelo.addClass("reintentar")
@@ -106,8 +103,8 @@ function actualizarInterfazContador() {
         url: '/estadisticas',
         type: 'GET',
         success: (data) => {
-            contadoresLocales.biodegradable = data.BiodegradableC;
-            contadoresLocales.noBiodegradable = data.NoBiodegradableC;
+            contadoresLocales.biodegradable = data.BiodegradableC || 0;
+            contadoresLocales.noBiodegradable = data.NoBiodegradableC || 0;
             Object.keys(contadoresLocales).forEach((tipo) => {
                 const count = contadoresLocales[tipo];
                 const limit = 20;
@@ -150,12 +147,10 @@ function actualizarAlertas() {
 
     const criticas = []
     const advertencias = []
-    let totalItems = 0
-
+    
     Object.keys(contadoresLocales).forEach((key) => {
         const count = contadoresLocales[key]
         const nombreMostrar = key === "noBiodegradable" ? "No biodegradable" : "Biodegradable"
-        totalItems += count
 
         if (count >= 20) {
             criticas.push({
@@ -210,7 +205,6 @@ function actualizarAlertas() {
 
     document.getElementById("stat-criticas").textContent = criticas.length
     document.getElementById("stat-advertencias").textContent = advertencias.length
-    document.getElementById("stat-total").textContent = totalItems
 }
 
 function cargarImagenes() {
@@ -252,15 +246,14 @@ function cargarImagenes() {
 }
 
 function eliminarImagenes() {
-    if (!confirm("¿Estás seguro de que deseas eliminar todas las imágenes? Esta acción no se puede deshacer.")) {
-        return;
-    }
+    if (!confirm("Esta acción eliminara todas las fotografías tomadas hasta el momento, está seguro?")) return;
     $.ajax({
         url: `/eliminarImagenes`,
         type: "DELETE",
         success: (response) => {
             alert(response.mensaje);
             cargarImagenes();
+            actualizarInterfazClasificacion(response); 
         },
         error: (err) => {
             console.error("Error al vaciar:", err);

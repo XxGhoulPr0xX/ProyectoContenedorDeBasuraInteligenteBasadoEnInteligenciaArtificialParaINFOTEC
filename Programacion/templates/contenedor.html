@@ -12,23 +12,54 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Contenedores</h1>
-            <p>Sistema de Clasificación de Residuos con IA</p>
+            <div class="header-content">
+                <h1>
+                    <svg class="leaf-icon" viewBox="0 0 24 24" fill="white">
+                        <path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"/>
+                    </svg>
+                    Contenedores
+                    <svg class="recycle-icon" viewBox="0 0 24 24" fill="white">
+                        <path d="M21.82,15.42L19.32,19.75C18.83,20.61 17.92,21.06 17,21H15V23L12.5,18.5L15,14V16H17.82L15.6,12.15L19.93,9.65L21.73,12.77C22.25,13.54 22.32,14.57 21.82,15.42M9.21,3.06H14.21C15.19,3.06 16.04,3.63 16.45,4.45L17.45,6.19L19.18,5.19L16.54,9.6L11.39,9.69L13.12,8.69L11.71,6.24L9.5,10.09L5.16,7.59L6.96,4.47C7.37,3.64 8.22,3.06 9.21,3.06M5.05,19.76L2.55,15.43C2.06,14.58 2.13,13.56 2.64,12.79L3.64,11.06L1.91,10.06L7.05,10.14L9.7,14.56L7.97,13.56L6.56,16H11V21H7.4C6.47,21.06 5.55,20.61 5.05,19.76Z"/>
+                    </svg>
+                </h1>
+                <p>Sistema de Clasificacion de Residuos con IA</p>
+            </div>
         </div>
         <div class="tabs">
             <button class="tab active" onclick="cambiarTab('monitor')">
+                <svg class="tab-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8Z"/>
+                </svg>
                 Monitor
             </button>
-            <button class="tab" onclick="cambiarTab('alertas')">Alertas</button>
-            <button class="tab" onclick="cambiarTab('estadisticas')">
-                Estadísticas
+            <button class="tab" onclick="cambiarTab('alertas')">
+                <svg class="tab-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M13,14H11V10H13M13,18H11V16H13M1,21H23L12,2L1,21Z"/>
+                </svg>
+                Alertas
             </button>
-            <button class="tab" onclick="cambiarTab('galeria')">Galería</button>
+            <button class="tab" onclick="cambiarTab('estadisticas')">
+                <svg class="tab-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M16,11.78L20.24,4.45L21.97,5.45L16.74,14.5L10.23,10.75L5.46,19H22V21H2V3H4V17.54L9.5,8L16,11.78Z"/>
+                </svg>
+                Estadisticas
+            </button>
+            <button class="tab" onclick="cambiarTab('galeria')">
+                <svg class="tab-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20,4H16.83L15,2H9L7.17,4H4A2,2 0 0,0 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6A2,2 0 0,0 20,4M20,18H4V6H8.05L9.88,4H14.12L15.95,6H20V18M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15Z"/>
+                </svg>
+                Galeria
+            </button>
         </div>
 
         <div id="tab-monitor" class="tab-content active">
             <div class="ultima-clasificacion">
-                <h3>Última Imagen Clasificada</h3>
+                <h3>
+                    <svg style="width:28px;height:28px" viewBox="0 0 24 24" fill="#9b2247">
+                        <path d="M4,4H7L9,2H15L17,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"/>
+                    </svg>
+                    Ultima Imagen Clasificada
+                </h3>
                 <div class="imagen-container">
                     <img id="imagen-clasificada" src="/static/imagenes/placeholder.jpg"
                         alt="Imagen de residuo clasificado" onerror="this.style.display='none'" />
@@ -36,7 +67,7 @@
                 <div class="result-box">
                     <p>
                         <strong>Clase del Modelo:</strong>
-                        <span id="clase-modelo" class="clase-resultado">Esperando detección...</span>
+                        <span id="clase-modelo" class="">Esperando detección...</span>
                     </p>
                     <p>
                         <strong>Confianza:</strong>
@@ -47,6 +78,9 @@
             <div class="contenedores-grid" id="contenedores-grid"></div>
             <div class="button-group">
                 <button class="button danger" onclick="resetearContadores()">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/>
+                    </svg>
                     Resetear Contadores
                 </button>
             </div>
@@ -55,17 +89,27 @@
         <div id="tab-alertas" class="tab-content">
             <div class="alertas-container">
                 <div class="alert-section">
-                    <h3><span class="alert-icon"></span> Alertas Críticas</h3>
+                    <h3>
+                        <svg style="width:24px;height:24px" viewBox="0 0 24 24" fill="#dc3545">
+                            <path d="M13 14H11V9H13M13 18H11V16H13M1 21H23L12 2L1 21Z"/>
+                        </svg>
+                        Alertas Criticas
+                    </h3>
                     <div id="alertas-criticas">
                         <div class="empty-state">
                             <div class="empty-state-icon">✓</div>
-                            <p>No hay alertas críticas</p>
+                            <p>No hay alertas criticas</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="alert-section">
-                    <h3><span class="alert-icon"></span> Advertencias</h3>
+                    <h3>
+                        <svg style="width:24px;height:24px" viewBox="0 0 24 24" fill="#ffc107">
+                            <path d="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16"/>
+                        </svg>
+                        Advertencias
+                    </h3>
                     <div id="alertas-advertencias">
                         <div class="empty-state">
                             <div class="empty-state-icon">✓</div>
@@ -75,19 +119,20 @@
                 </div>
 
                 <div class="alert-section">
-                    <h3>Estadísticas de Alertas</h3>
+                    <h3>
+                        <svg style="width:24px;height:24px" viewBox="0 0 24 24" fill="#9b2247">
+                            <path d="M16,11.78L20.24,4.45L21.97,5.45L16.74,14.5L10.23,10.75L5.46,19H22V21H2V3H4V17.54L9.5,8L16,11.78Z"/>
+                        </svg>
+                        Estadisticas de Alertas
+                    </h3>
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-number" id="stat-criticas">0</div>
-                            <div class="stat-label">Alertas Críticas</div>
+                            <div class="stat-label">Alertas Criticas</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-number" id="stat-advertencias">0</div>
                             <div class="stat-label">Advertencias</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="stat-total">0</div>
-                            <div class="stat-label">Total Depositado</div>
                         </div>
                     </div>
                 </div>
@@ -97,15 +142,20 @@
         <div id="tab-estadisticas" class="tab-content">
             <div class="alertas-container">
                 <div class="alert-section">
-                    <h3><span class="alert-icon"></span> Resumen del Sistema</h3>
+                    <h3>
+                        <svg style="width:24px;height:24px" viewBox="0 0 24 24" fill="#9b2247">
+                            <path d="M16,11.78L20.24,4.45L21.97,5.45L16.74,14.5L10.23,10.75L5.46,19H22V21H2V3H4V17.54L9.5,8L16,11.78Z"/>
+                        </svg>
+                        Resumen del Sistema
+                    </h3>
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-number" id="historial-total">0</div>
                             <div class="stat-label">Total Clasificado</div>
                         </div>
-                        <div class="stat-card" style="background: linear-gradient(135deg, #722f37 0%, #a04550 100%);">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #611232 0%, #9b2247 100%);">
                             <div class="stat-number" id="clase-principal" style="font-size: 1.5rem;">---</div>
-                            <div class="stat-label">Clase más detectada</div>
+                            <div class="stat-label">Clase mas detectada</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-number" id="historial-confianza">0%</div>
@@ -114,13 +164,13 @@
                     </div>
 
                     <div class="stats-grid" style="margin-top: 20px;">
-                        <div class="stat-card" style="border-top: 4px solid #2d5016;">
-                            <div class="stat-number" id="conteo-bio" style="color: #2d5016;">0</div>
+                        <div class="stat-card" style="border-top: 4px solid #1e5b4f;">
+                            <div class="stat-number" id="conteo-bio" style="color: #1e5b4f;">0</div>
                             <div class="stat-label">Biodegradables</div>
                             <div class="alert-time" id="promedio-bio">Promedio: 0%</div>
                         </div>
-                        <div class="stat-card" style="border-top: 4px solid #1565c0;">
-                            <div class="stat-number" id="conteo-no-bio" style="color: #1565c0;">0</div>
+                        <div class="stat-card" style="border-top: 4px solid #a57f2c;">
+                            <div class="stat-number" id="conteo-no-bio" style="color: #a57f2c;">0</div>
                             <div class="stat-label">No Biodegradables</div>
                             <div class="alert-time" id="promedio-no-bio">Promedio: 0%</div>
                         </div>
@@ -129,7 +179,10 @@
 
                 <div class="alert-section">
                     <h3>
-                        <span class="alert-icon"></span> Historial de Identificaciones
+                        <svg style="width:24px;height:24px" viewBox="0 0 24 24" fill="#9b2247">
+                            <path d="M3,4H21V8H3V4M3,10H21V14H3V10M3,16H21V20H3V16Z"/>
+                        </svg>
+                        Historial de Identificaciones
                     </h3>
                     <div id="lista-historial">
                         <div class="loading">Cargando...</div>
@@ -141,13 +194,29 @@
         <div id="tab-galeria" class="tab-content">
             <div class="button-group" style="margin-bottom: 30px">
                 <button class="button primary" onclick="cargarImagenes()">
-                    Actualizar Galería
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z"/>
+                    </svg>
+                    Actualizar Galeria
                 </button>
-                <button class="button primary"  onclick="eliminarImagenes()">
+                <button class="button danger" onclick="eliminarImagenes()">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/>
+                    </svg>
                     Eliminar Imagenes
                 </button>
             </div>
-            <div id="galeria-container" class="loading">Cargando imágenes...</div>
+            <div id="galeria-container" class="loading">Cargando imagenes...</div>
+        </div>
+
+        <div class="footer">
+            <svg viewBox="0 0 24 24" fill="#9b2247">
+                <path d="M21.82,15.42L19.32,19.75C18.83,20.61 17.92,21.06 17,21H15V23L12.5,18.5L15,14V16H17.82L15.6,12.15L19.93,9.65L21.73,12.77C22.25,13.54 22.32,14.57 21.82,15.42M9.21,3.06H14.21C15.19,3.06 16.04,3.63 16.45,4.45L17.45,6.19L19.18,5.19L16.54,9.6L11.39,9.69L13.12,8.69L11.71,6.24L9.5,10.09L5.16,7.59L6.96,4.47C7.37,3.64 8.22,3.06 9.21,3.06M5.05,19.76L2.55,15.43C2.06,14.58 2.13,13.56 2.64,12.79L3.64,11.06L1.91,10.06L7.05,10.14L9.7,14.56L7.97,13.56L6.56,16H11V21H7.4C6.47,21.06 5.55,20.61 5.05,19.76Z"/>
+            </svg>
+            <span>Clasificacion Inteligente de Residuos</span>
+            <svg viewBox="0 0 24 24" fill="#1e5b4f">
+                <path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"/>
+            </svg>
         </div>
     </div>
     <script src="{{ url_for('static', filename='js/contenedor.js') }}"></script>

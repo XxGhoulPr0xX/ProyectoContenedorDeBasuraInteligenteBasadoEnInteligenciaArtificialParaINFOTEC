@@ -53,7 +53,7 @@
 
 const char* ssid = "IZZI-FA5D";
 const char* password = "QJY5MDZYWMLD";
-const char* servidor = "http://192.168.0.121:5000/"; 
+const char* servidor = "http://192.168.0.121:8080/"; 
 
 // --- Creación de objetos ---
 
@@ -71,7 +71,7 @@ const byte angulos[2] = {0, 180};
 // Comandos esperados para clasificar ('B' para Biodegradable, 'N' para No-biodegradable)
 const char comandos[2] = {'B', 'N'};
 // Velocidad del movimiento del servo (menor valor = más rápido)
-const int velocidad = 10;
+const int velocidad = 5;
 // Variable para trackear estado de OLED
 bool displayInicializada = false;
 
@@ -208,17 +208,13 @@ void mostrarMensajeTemporal(String mensaje, int tamano = 1, int tiempo = 3000) {
  */
 void moverServoSuave(int anguloObjetivo) {
     int posicionActual = servoMotor.read();
-    int incremento = (anguloObjetivo > posicionActual) ? 1 : -1;
-    
-    while (posicionActual != anguloObjetivo) {
-        posicionActual += incremento;
-        if ((incremento == 1 && posicionActual > anguloObjetivo) || 
-            (incremento == -1 && posicionActual < anguloObjetivo)) {
-            posicionActual = anguloObjetivo;
-        }
-        servoMotor.write(posicionActual); 
-        delay(velocidad);                   
+    int paso = (anguloObjetivo > posicionActual) ? 2 : -2; 
+    while (abs(posicionActual - anguloObjetivo) > abs(paso)) {
+        posicionActual += paso;
+        servoMotor.write(posicionActual);
+        delay(velocidad + 10);
     }
+    servoMotor.write(anguloObjetivo);
 }
 
 /**
@@ -378,7 +374,7 @@ void setup() {
         Serial.println("ADVERTENCIA: OLED no inicializada, continuando sin display...");
     }
 
-    servoMotor.attach(SERVO_PIN);
+    servoMotor.attach(SERVO_PIN, 500, 2400);
     servoMotor.write(100); 
     Serial.println("Servo inicializado");
     mostrarMensajeTemporal("Servo OK", 2, 1000);
