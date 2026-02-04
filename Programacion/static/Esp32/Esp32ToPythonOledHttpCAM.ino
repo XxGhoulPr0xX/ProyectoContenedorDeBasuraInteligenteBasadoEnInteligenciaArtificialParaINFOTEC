@@ -24,7 +24,7 @@
 // Pines para el sensor ultrasónico y el servomotor
 #define TRIG_PIN 1              
 #define ECHO_PIN 2             
-#define SERVO_PIN 3           
+#define SERVO_PIN 40           
 #define MAX_DISTANCE 10       
 
 // --- Configuración de pines de la cámara ESP32-S3 CAM ---
@@ -53,7 +53,8 @@
 
 const char* ssid = "IZZI-FA5D";
 const char* password = "QJY5MDZYWMLD";
-const char* servidor = "http://192.168.0.121:8080/"; 
+//const char* servidor = "http://148.116.89.8/"; //Produccion
+const char* servidor = "http://192.168.0.121:8080/"; //Desarrollo
 
 // --- Creación de objetos ---
 
