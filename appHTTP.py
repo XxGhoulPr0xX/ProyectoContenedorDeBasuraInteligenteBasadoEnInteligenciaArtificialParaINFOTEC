@@ -10,7 +10,8 @@ def create_app():
     app.register_blueprint(rutas)
     return app
 
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app()
     port = int(os.environ.get("PORT", 8080))
     serve(app, host=alpha.getIpServidor(), port=8080)
