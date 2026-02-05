@@ -12,4 +12,5 @@ COPY . .
 
 EXPOSE 8080
 
+
 CMD ["python", "-m", "waitress", "--host=0.0.0.0", "--port=8080", "--call", "appHTTP:create_app"]
