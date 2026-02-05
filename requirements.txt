@@ -16,7 +16,7 @@ python-dotenv==1.1.1
 
 # --- Inteligencia Artificial (Solo Keras/TensorFlow) ---
 # Nota: Se mantiene tensorflow para ejecutar el modelo .h5
-tensorflow==2.20.0#2.19.0
+tensorflow==2.20.0
 keras==3.10.0
 h5py==3.13.0
 numpy==2.1.3
