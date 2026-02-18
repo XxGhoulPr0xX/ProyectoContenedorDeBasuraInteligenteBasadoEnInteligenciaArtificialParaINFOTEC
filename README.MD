@@ -1,279 +1,143 @@
-# Contenedor de Basura Inteligente
+# Sistema de Control de Horas de Servicio Social: BitBunker
 
-Este proyecto es una solución integral de **Visión Artificial** e **IoT** diseñada para **automatizar la clasificación de residuos**.
-Integra modelos de **aprendizaje profundo**, hardware embebido y una **interfaz web interactiva** para gestionar la clasificación y la capacidad de recolección en tiempo real.
+Este proyecto es una aplicación web desarrollada con *Django* cuyo objetivo es llevar el **control y seguimiento de horas de servicio social para estudiantes**.
 
- **Aplicación en línea:**
+Permite:
 
- [https://proyectocontenedordebasurainteligentebas.onrender.com](https://proyectocontenedordebasurainteligentebas.onrender.com)
+* Registro de usuarios
+* Inicio de sesión mediante matrícula
+* Registro de horas diarias
+* Visualización del progreso acumulado
+* Generación de reportes en PDF
 
----
-
-## Características Principales
-
-* **Clasificación con IA Dual**
-  Soporte para modelos **TensorFlow/Keras** (`.h5`) y **YOLO (Ultralytics)**, capaces de identificar categorías como:
-
-  * Biodegradable
-  * Plástico
-  * Metal
-  * Vidrio
-  * Otros residuos
-
-* **Procesamiento de Imágenes en Tiempo Real**
-  Recepción de imágenes como **arreglos de bytes** mediante solicitudes **HTTP POST** desde dispositivos IoT.
-
-* **Filtrado por Nivel de Confianza**
-  El sistema valida una detección únicamente si supera un **60% de confianza**.
-  En caso contrario, se descarta y se solicita un nuevo intento.
-
-* **Gestión de Inventario Visual**
-  Módulo para:
-
-  * Almacenar capturas
-  * Listar imágenes
-  * Eliminar registros del sistema
-
-* **Dashboard Estadístico**
-  Visualización automática de métricas como:
-
-  * Promedio de confianza
-  * Total de detecciones
-  * Porcentaje de residuos por categoría
+El sistema está diseñado para automatizar el seguimiento de horas de manera clara y sencilla.
 
 ---
 
-## Stack Tecnológico
+##  Stack Tecnológico
 
-### 🔹 Software
+### Backend
 
-* **Backend**
-  Desarrollado en **Python** con **Flask**, encargado de:
+* **Python 3.10.10**
+* **Django 5.2.11**
 
-  * Recibir imágenes
-  * Procesar inferencias
-  * Comunicarse con el hardware IoT
+### Frontend
 
-* **Servidor de Producción**
-  **Waitress**, utilizado para ejecutar el backend en un entorno estable y de producción.
-
-* **Inteligencia Artificial**
-
-  * **TensorFlow** y **Keras** para modelos de clasificación
-  * **YOLO (Ultralytics)** para visión por computadora e inferencia en tiempo real
-
-* **Frontend**
-  Interfaz web desarrollada con:
-
-  * **HTML5**
-  * **CSS3**
-  * **JavaScript**
-  * **jQuery**, para actualización dinámica mediante *long polling*
+* HTML5
+* CSS3
+* JavaScript
 
 ---
+## Usuarios de Prueba
 
-### 🔹 Hardware
+Puedes usar los siguientes usuarios para probar la aplicación:
 
-* **ESP32-S3 CAM**
-  Microcontrolador encargado de:
-
-  * Captura de imágenes
-  * Comunicación inalámbrica
-  * Envío de datos al backend
-
-* **Sensor Ultrasónico (HC-SR04)**
-  Detecta la presencia de residuos y **activa el proceso de clasificación**.
-
-* **Servomotor**
-  Controla la **apertura y direccionamiento de las compuertas** según la categoría detectada
-  (Biodegradable / No Biodegradable).
-
-* **Pantalla OLED**
-  Muestra en tiempo real:
-
-  * Estado del sistema
-  * Conexión WiFi
-  * Resultado de la clasificación
+| Matrícula | Contraseña |
+| --------- | ---------- |
+| 211064018 | 211064018  |
+| 1         | 1234       |
+| 2         | 2345       |
 
 ---
+###  Descripción de Endpoints
 
-## Estructura del Código
-
-* **`appHTTP.py`**
-  Punto de entrada del sistema. Inicializa Flask y despliega el servidor usando **Waitress**.
-
-* **`ManejadorHTTP.py`**
-  Orquestador principal:
-
-  * Recibe imágenes
-  * Coordina el guardado
-  * Ejecuta la inferencia con IA
-
-* **`rutas.py`**
-  Define todos los endpoints de la API:
-
-  * Clasificación
-  * Historial
-  * Estadísticas
-  * Galería
-
-* **`Servicios.py`**
-  Inicialización de servicios bajo el patrón **Singleton**:
-
-  * Manejador principal
-  * Gestor de estadísticas
-  * Gestor de imágenes
-
-* **`pruebaModelosTF.py` / `PruebaModelosYOLO.py`**
-  Clases especializadas en la carga y ejecución de inferencias con los modelos de IA.
-
-* **`HistorialResultados.py`**
-  Memoria lógica del sistema:
-
-  * Almacena cada detección
-  * Mantiene el orden cronológico
-  * Genera reportes
-
-* **`GestorImagenes.py`**
-  Administra el sistema de archivos de la galería de capturas.
+| Ruta         | Método   | Descripción                             |
+| ------------ | -------- | --------------------------------------- |
+| `/profile/`  | GET      | Visualización del perfil del estudiante |
+| `/home/`     | GET      | Página principal tras iniciar sesión    |
+| `/inicio/`   | GET      | Página principal antes iniciar sesión   |
+| `/register/` | GET/POST | Registro de nuevos usuarios             |
+| `/login/`    | GET/POST | Inicio de sesión                        |
+| `/setup/`    | GET/POST | Configuración inicial                   |
+| `/index/`    | GET      | Página principal del sistema            |
+| `/save_pdf/` | POST     | Generación de reporte en PDF            |
+| `/contador/` | GET/POST | Registro y conteo de horas              |
+| `/logout/`   | GET      | Cierre de sesión                        |
 
 ---
-
 ## Flujo General del Sistema
 
-*(Hardware + Software + Visualización)*
+1️. El estudiante se registra o inicia sesión con su matrícula.
 
-### 1️.- Detección del Objeto
+2️. Accede al panel principal donde puede:
 
-El **sensor ultrasónico** monitorea el entorno y, al detectar un objeto a menos de **10 cm**, activa el proceso.
+* Registrar horas diarias
+* Consultar su acumulado
+* Visualizar progreso
 
-### 2️.- Captura y Envío
+3️. El sistema contabiliza automáticamente las horas ingresadas.
 
-La **ESP32-CAM** toma una fotografía y la envía al backend mediante una petición **HTTP POST** como arreglo de bytes.
-
-### 3️.- Recepción y Proxy
-
-**Nginx** actúa como proxy inverso:
-
-* Recibe la petición del ESP32
-* La redirige al contenedor backend en **Flask**
-
-### 4️.- Procesamiento e Inferencia
-
-* El **Manejador** recibe la imagen
-* Se ejecuta la inferencia con **TensorFlow o YOLO**
-* Se determina la clase y la confianza
-
-### 5️.- Validación y Persistencia
-
-* Si la confianza es **> 60%**:
-
-  * La imagen se guarda
-  * Se registra en `HistorialResultados`
-* Si no, se descarta para evitar falsos positivos
-
-### 6️.- Respuesta al Dispositivo
-
-El servidor responde con un **JSON**, por ejemplo:
-
-```json
-{ "clase": "Biodegradable" }
-```
-
-### 7️.- Acción Física
-
-* La ESP32 muestra el resultado en la **pantalla OLED**
-* El **servomotor** gira (0° / 90°) y deposita el residuo correctamente
-
-### 8️.- Visualización y Sincronización
-
-* El dashboard ejecuta `contenedor.js`
-* Mediante **long polling**, detecta cambios
-* Se actualizan:
-
-  * Historial
-  * Estadísticas
-  * Nivel de llenado
+4️. El usuario puede generar un **reporte en PDF** con su progreso.
 
 ---
 
-## Endpoints de la API
+## Ejecución local
 
-| Ruta                       | Método | Descripción                                  |
-| -------------------------- | ------ | -------------------------------------------- |
-| `/index`                   | GET    | Renderiza el dashboard principal             |
-| `/`                        | GET    | Redirección a `/index`                       |
-| `/`                        | POST   | Recibe la imagen en bytes para clasificación |
-| `/verificar_actualizacion` | GET    | Long polling para refrescar la interfaz      |
-| `/estadisticas`            | GET    | Conteos y promedios de confianza             |
-| `/historial`               | GET    | Registro cronológico de detecciones          |
-| `/listarImagenes`          | GET    | Lista de imágenes almacenadas                |
-| `/eliminarImagenes`        | DELETE | Limpia capturas y reinicia estado            |
-| `/resetEstadisticas`       | POST   | Reinicia contadores de la sesión             |
+### Requisitos
 
----
+* Python **3.10.10**
 
-## Configuración y Ejecución
-
-### 1️.- Requisitos
-
-Python **3.10.10** y dependencias:
+Instalar dependencias:
 
 ```bash
-pip install flask waitress tensorflow ultralytics numpy opencv-python matplotlib
+pip install -r requirements.txt
 ```
 
-### 2️.- Ejecución Local
+Para ejecuctar el sistema es con este comando:
 
 ```bash
-python appHTTP.py
+python manage.py runserver
 ```
 
-El servidor se inicia en el puerto **8080**.
+Acceso en:
+
+```
+http://127.0.0.1:8000/
+```
 
 ---
 
 ## Ejecución con Docker (Recomendado)
 
-El proyecto incluye un entorno Docker para asegurar compatibilidad total.
+### 1. Construir la imagen (Build)
 
-**Servicios:**
-
-1. **Backend Flask** (motor de IA)
-2. **Nginx** (proxy inverso, subida de imágenes hasta **10MB**)
+Este comando lee tu `Dockerfile` y empaqueta todo tu código y dependencias en una imagen.
 
 ```bash
-docker-compose up --build
+docker build -t BitBunker .
+
 ```
 
-Acceso desde:
- `http://localhost:80`
+### 2. Ejecutar el contenedor (Run)
 
-### Detalles de Infraestructura
+Una vez creada la imagen, la pones en marcha con este comando:
 
-* **Dockerfile**
-  Basado en `python:3.10.10-slim`, optimizado y ejecutado con **Waitress**.
+```bash
+docker run -p 8000:8000 BitBunker
 
-* **nginx.conf**
-  Maneja:
-
-  * Redirección al backend
-  * Buffers de imágenes para dispositivos IoT
+```
 
 ---
 
-## Nota Importante sobre el ESP32
+## Estructura General del Proyecto
 
-Para que el sistema funcione correctamente es **obligatorio**:
+* `Services/` → Logica extensa del sistema
+* `Views/` → Control principal de las vistas sistema
+* `urls.py` → Definición de rutas
+* `templates/` → Vistas HTML
+* `static/` → Archivos CSS y JS
+* `manage.py` → Punto de entrada del proyecto Django
 
-* Contar con un **ESP32 configurado con los módulos adecuados**
-* Utilizar el firmware incluido en el proyecto:
+---
 
-**`static/esp32/Esp32ToPythonOledHttpCAM.ino`**
+##  Nota Importante sobre Persistencia
 
-Este programa permite:
+Actualmente **la persistencia de datos NO está habilitada**, ni del lado del servidor ni en la lógica del sistema.
 
-* Capturar imágenes
-* Enviar peticiones HTTP al backend
-* Mostrar resultados en la pantalla OLED
-* Controlar el servomotor según la clasificación recibida
+Esto significa que:
+
+* Los datos no se guardan permanentemente.
+* Al reiniciar el servidor, la información puede perderse.
+* El proyecto funciona como prototipo funcional.
+
+
